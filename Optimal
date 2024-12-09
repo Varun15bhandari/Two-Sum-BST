@@ -1,0 +1,63 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int data;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int val) { data = val; left = null, right = null }
+ * }
+ **/
+ class BSTIterator {
+    private Stack<TreeNode> stack;
+    private boolean reverse;
+
+    // Constructor to initialize the iterator
+    public BSTIterator(TreeNode root, boolean isReverse) {
+        stack = new Stack<>();
+        reverse = isReverse;
+        pushAll(root);
+    }
+
+    // Helper function to push all left or right nodes
+    private void pushAll(TreeNode node) {
+        while (node != null) {
+            stack.push(node);
+            node = (reverse) ? node.right : node.left;
+        }
+    }
+
+    // Check if there are more elements in the BST
+    public boolean hasNext() {
+        return !stack.isEmpty();
+    }
+
+    // Get the next element in the inorder or reverse inorder traversal
+    public int next() {
+        TreeNode node = stack.pop();
+        if (!reverse) pushAll(node.right);
+        else pushAll(node.left);
+        return node.data;
+    }
+}
+
+
+class Solution {
+    public boolean twoSumBST(TreeNode root, int k) {
+        //your code goes here
+         if (root == null) return false;
+
+        // Initialize two iterators
+        BSTIterator l = new BSTIterator(root, false); // normal inorder
+        BSTIterator r = new BSTIterator(root, true);  // reverse inorder
+
+        int i = l.next();
+        int j = r.next();
+
+        while (i < j) {
+            if (i + j == k) return true;
+            else if (i + j < k) i = l.next();
+            else j = r.next();
+        }
+        return false;
+    }
+}
